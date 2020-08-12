@@ -6,7 +6,7 @@ app.listen(3000);
 
 const arr = [];
 
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < 17; i++) {
     arr.push(`http://localhost:3000/imgs/${i}.jpeg`);
 }
 app.get('/api/img', (req, res) => {
