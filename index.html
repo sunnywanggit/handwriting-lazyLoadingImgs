@@ -14,36 +14,37 @@
 <div id="app">
     <div class="box">
         <li v-for="img in imgs" :key="img">
-            <img :src="img" alt="">
+            <!--使用懒加载的时候，这里就不能使用 src 了，要使用 v-lazy-->
+            <img v-lazy="img" alt="">
         </li>
     </div>
 </div>
 <script>
-    Vue.use(VueLazyload,{
+    Vue.use(VueLazyload, {
         //预渲染1.3屏，默认是当前窗口的1.3倍,一般模式是1.3
-        preLoad:1.3,
+        preLoad: 1.3,
     });
     let vm = new Vue({
-        el:'#app',
-        data:{
-            imgs:[]
+        el: '#app',
+        data: {
+            imgs: []
         },
-        created(){
-            axios.get('http://localhost:3000/api/img').then(res=>{
+        created() {
+            axios.get('http://localhost:3000/api/img').then(res => {
                 this.imgs = res.data;
-                console.log(res)
-            })
+            });
         }
-    })
+    });
 </script>
 <style>
-    .box{
+    .box {
         width: 500px;
         height: 500px;
         border: 1px solid red;
         overflow: scroll;
     }
-    img{
+
+    img {
         width: 200px;
         height: 200px;
     }
