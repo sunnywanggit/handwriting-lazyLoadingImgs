@@ -20,21 +20,43 @@ function getScrollParent(el){
 const Lazy = () => {
     //我们可以把多个方法都写到这里面
 
+    //每一个图片元素都构造成一个类的实例,因为类方便扩展，而且可以封装
+    class ReactiveListener{
+
+    }
+
     return class LazyClass {
         constructor(options){
             //保存用户传入的属性
             this.options = options;
+            //是否绑定过处理函数
+            this.bindHandler = false;
+            //为每个元素都创建一个实例，把所有的实例都存放到这个数组里面
+            this.listenerQueue = [];
 
+        }
+        handleLazyLoad(){
+            console.log('ok',this)
         }
         add(el,bindings,vnode){
             //找到具有 scroll 性质的父级元素
             Vue.nextTick(()=>{
                 //我需要获取离我最近带有滚动性质的盒子
                 let scrollParent = getScrollParent(el);
-                if(scrollParent){
-                    console.log(scrollParent);
+                //bindHandler 的判断是为了防止多次绑定，耗费性能
+                if(scrollParent && !this.bindHandler){
+                    this.bindHandler = true;
+                    //监听滚动事件，处理懒加载
+                    scrollParent.addEventListener('scroll',this.handleLazyLoad.bind(this))
                 }
-
+                //需要判断这个元素是否在当前容器的可视区域中，如果不是，就不用渲染
+                const listener = new ReactiveListener({
+                    el,
+                    src:bindings.value, //bindings.value 就是 v-lay="img" 里面 img 的值
+                    options:this.options
+                });
+                //把所有的 img 都创建一个实例，并放到数组中，然后我们就需要判断一下，数组里面的哪些应该显示，哪些不应该显示
+                this.listenerQueue.push(listener)
             })
         }
     }
